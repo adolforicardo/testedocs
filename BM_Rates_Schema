@@ -1,0 +1,251 @@
+Passo 1 - Tabelas que devem ser criadas
+
+-- 1. Drop TABLE  
+DROP TABLE GBUSR0014.FNBBMINFR;
+
+-- 2. Create Table
+CREATE TABLE GBUSR0014.FNBBMINFR (
+    id NUMERIC(11,0) GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    dataType VARCHAR(50),
+    source VARCHAR(100),
+    curCode VARCHAR(3),
+    curName VARCHAR(50),
+    curCountry VARCHAR(50),
+    createdDte DATE,
+    lastUpdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    auditDate DATE,     
+    auditTime TIME,     
+    auditUser VARCHAR(50),
+	PRIMARY KEY(id)
+);
+
+-- 3. LABEL the Table
+LABEL ON TABLE GBUSR0014.FNBBMINFR IS 'FNB BM INFO RATE';
+
+-- 4. LABEL the Table Field
+LABEL ON COLUMN GBUSR0014.FNBBMINFR (
+	id IS 'ID',
+	dataType IS 'Data Type',
+	source IS 'Source',
+	curCode IS 'Currency Code',
+	curName IS 'Currency Name',
+	curCountry IS 'Currency Country',
+	createdDte IS 'Created Date',
+	lastUpdate IS 'Last Update',
+	auditDate IS 'Audit Date',
+	auditTime IS 'Audit Time',
+	auditUser IS 'Audit User'
+
+);
+
+-- 1. Drop TABLE  
+DROP TABLE GBUSR0014.FNBBMRATE;
+
+-- 2. Create Table
+CREATE TABLE GBUSR0014.FNBBMRATE (
+    id NUMERIC(11,0) GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    curCode VARCHAR(3),
+    curName VARCHAR(50),
+    curCountry VARCHAR(100),
+    buy NUMERIC(10, 2),
+    sell NUMERIC(10, 2),
+    average NUMERIC(10, 2),
+    rateType VARCHAR(50),
+    infoRateId NUMERIC(11,0),
+    FOREIGN KEY (infoRateId) REFERENCES GBUSR0014.FNBBMINFR(id),
+	PRIMARY KEY(id)
+);
+
+-- 3. LABEL the Table
+LABEL ON TABLE GBUSR0014.FNBBMRATE IS 'FNB BM RATE';
+
+-- 4. LABEL the Table Field
+LABEL ON COLUMN GBUSR0014.FNBBMRATE (
+	id IS 'ID',
+	curCode IS 'Currency Code',
+	curName IS 'Currency Name',
+	curCountry IS 'Currency Country',
+	buy IS 'Buy',
+	sell IS 'Sell',
+	average IS 'Average',
+	rateType IS 'Rate Type',
+	infoRateId IS 'Info Rate ID'
+
+);
+
+-- 1. Drop TABLE  
+DROP TABLE GBUSR0014.FNBBMCOMM;
+
+-- 2. Create Table
+CREATE TABLE GBUSR0014.FNBBMCOMM (
+    id NUMERIC(11,0) GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    commodity VARCHAR(50),
+    currency VARCHAR(50),
+    buy NUMERIC(10, 2),
+    sell NUMERIC(10, 2),
+    average NUMERIC(10, 2),
+    unit VARCHAR(50),
+    infoRateId NUMERIC(11,0),
+    FOREIGN KEY (infoRateId) REFERENCES GBUSR0014.FNBBMINFR(id),
+	PRIMARY KEY(id)
+);
+
+-- 3. LABEL the Table
+LABEL ON TABLE GBUSR0014.FNBBMCOMM IS 'FNB BM COMMODITY';
+
+-- 4. LABEL the Table Field
+LABEL ON COLUMN GBUSR0014.FNBBMCOMM (
+	id IS 'ID',
+	commodity IS 'commodity',
+	currency IS 'Currency',
+	buy IS 'Buy',
+	sell IS 'Sell',
+	average IS 'Average',
+	unit IS 'Unit',
+	infoRateId IS 'Info Rate ID'
+
+);
+
+-- 1. Drop TABLE 
+DROP TABLE GBUSR0014.FNBBMCUCO;
+
+-- 2. Create Table
+CREATE TABLE GBUSR0014.FNBBMCUCO (
+    country VARCHAR(50),
+    currCode VARCHAR(10) NOT NULL,
+	PRIMARY KEY(country)
+);
+
+-- 3. LABEL the Table
+LABEL ON TABLE GBUSR0014.FNBBMCUCO IS 'FNB BM CURRENCYCODE';
+
+-- 4. LABEL the Table Field
+LABEL ON COLUMN GBUSR0014.FNBBMCUCO (
+	country IS 'Country',
+	currCode IS 'Currency Code'
+);
+
+INSERT INTO GBUSR0014.FNBBMCUCO (country, currCode)
+VALUES
+    ('Estados Unidos','USD'),
+    ('Àfrica do Sul','ZAR'),
+    ('Emiratos A.Unid','AED'),
+    ('Austrália','AUD'),
+    ('Brasil','BRL'),
+    ('BAD','BUA'),
+    ('Botswana','BWP'),
+    ('Canada','CAD'),
+    ('Suíça','CHF'),
+    ('China/Offshore','CNH'),
+    ('China','CNY'),
+    ('Dinamarca','DKK'),
+    ('União Europeia','EUR'),
+    ('FAD','FUA'),
+    ('Inglaterra','GBP'),
+    ('BID','IDB'),
+    ('Kowait','KWD'),
+    ('Mauricias','RUP'),
+    ('Noruega','NOK'),
+    ('Nova Zelandia','NZD'),
+    ('FMI','SDR'),
+    ('Suécia','SEK'),
+    ('Zâmbia','ZMK'),
+    ('India','INR'),
+    ('Iraque','IQD'),
+    ('Japão','JPY'),
+    ('Malawi','MWK'),
+    ('Rússia','RUB'),
+    ('Tanzânia','TZS'),
+    ('Zimbabwe','ZMD'),
+    ('OURO - usd's por 1 onça','XAU');
+
+
+-- 1. Drop TABLE 
+DROP TABLE GBUSR0014.FNBBMFILE;
+
+-- 2. Create Table
+CREATE TABLE GBUSR0014.FNBBMFILE (
+    filename VARCHAR(50),
+    date VARCHAR(20) NOT NULL,
+    hour VARCHAR(10) NOT NULL,
+	status VARCHAR(20) NOT NULL, -- PROCESSADO, PENDENTE, ERRO
+	PRIMARY KEY(filename)
+);
+
+-- 3. LABEL the Table
+LABEL ON TABLE GBUSR0014.FNBBMFILE IS 'FNB BM FILE';
+
+-- 4. LABEL the Table Field
+LABEL ON COLUMN GBUSR0014.FNBBMFILE (
+	filename IS 'Filename',
+	date IS 'Date',
+	hour IS 'Hour',
+	status IS 'Status'
+);
+
+-------------------
+
+Passo 2 - Garantir que as moedas e as diferenças de spread máximo estejam no BANKA bem configurados
+
+-------------------
+
+Passo 3 - Garantir que o serviço pode inserir dados nas tabelas de BANKA produção
+
+STRJRNPF FILE(GBUSR0014/FNBBMINFR) JRN($PMEDHJRN/DFTJRN) IMAGES(*BOTH)   -- BANKA -> STRPDM
+STRJRNPF FILE(GBUSR0014/FNBBMRATE) JRN($PMEDHJRN/DFTJRN) IMAGES(*BOTH)   -- BANKA -> STRPDM
+STRJRNPF FILE(GBUSR0014/FNBBMCOMM) JRN($PMEDHJRN/DFTJRN) IMAGES(*BOTH)   -- BANKA -> STRPDM
+STRJRNPF FILE(GBUSR0014/FNBBMFILE) JRN($PMEDHJRN/DFTJRN) IMAGES(*BOTH)   -- BANKA -> STRPDM
+STRJRNPF FILE(GBUSR0014/FNBBMCUCO) JRN($PMEDHJRN/DFTJRN) IMAGES(*BOTH)   -- BANKA -> STRPDM
+
+--------------------------
+
+Passo 4 - Transação para ser configurado em produção 
+
+
+API
+Criar Câmbios - XMLFG6125, TTR - CRCOV
+
+Tabela do LastRate - @Table(name = "FGCMB", schema = "PROFG0014")
+Tabela de monitoria de câmbios do BM - @Table(name = "FNBBMFILE", schema = "GBUSR0014")
+
+-------------------------
+Passo 5 - PACOTES
+
+- fnbm-pangolin-rates
+- fnbm-banka-integration-rates
+- fnbm-report-engine
+- fnbm-notification-engine
+- fnbm-pangolin-idm
+
+--------------------------
+
+Passo 5 - SCRIPTS
+
+INSERT INTO pangolin_config.fnbm_config.properties (key, value, application, profile, label, version, state)
+VALUES
+('template.title.bmapi.error.pt', 'Notificação de Erro na Requisição de Taxa de Referência de Câmbios do Banco de Moçambique', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('integration.notification.engine.baseUrl', 'http://MOZ-FNBMMWPRD.fnb.co.za:7011/pangolin/notification', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('template.id.bmapi.error.pt', 'BM_API_PT', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('template.id.bmapi.error.en', 'BM_API_EN', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('notification.error.bmapi.email.to', 'adolfo.ricardo@fnb.co.mz, elton.cuambe@fnb.co.mz, enoque.macanda@fnb.co.mz', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('notification.error.bmapi.email.from', 'adolfo.ricardo@fnb.co.mz', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('integration.notification.engine.send.path', '${integration.notification.engine.baseUrl}/request/send', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('banka.integration.rates.programCaller', 'PANGOLIN', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('schedule.cron.get.current.exchanges.rates', '0 0 8-20 * * *', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.regex.file', '%s_(0930|1230|1530)\.xlsx$', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('engine.report.extract.foreign.exchange.file.service.path', '${engine.report.baseUrl}/foreign-exchange/bm/file/extract', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.domain', 'FNBJNB01', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.host', 'MOZ-FILESVR03.fnb.co.za', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.username', 'svc_moz_fnbmgw_prod', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.password', 'M0(6z#jhA', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.base.path', 'Treasury', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('smb.directory.path', 'Cambios/Dealing Desk/Tabela FNB e Câmbios Ref BM/%s/%s', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('engine.report.baseUrl', 'http://MOZ-FNBMMWPRD.fnb.co.za:8003/engine/report', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('banka.integration.rates.current.foreign.path', '${banka.integration.rates.service.baseUrl}/rate/current', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('banka.integration.rates.service.exchange.rate.create.path', '${banka.integration.rates.service.baseUrl}/rate/create', 'fnbm-pangolin-rates', 'prod', 'latest', 'latest', 'ENABLED'),
+('pangolin.idm.generate.token.path','http://MOZ-FNBMMWPRD.fnb.co.za:7008/pangolin/idm/auth/token/generate','fnbm-pangolin-rates','prod','latest', 'latest','ENABLED'),
+('pangolin.idm.username','itscredit','fnbm-pangolin-rates','prod','latest', 'latest','ENABLED'),
+('pangolin.idm.password','itscredit','fnbm-pangolin-rates','prod','latest', 'latest','ENABLED'),
+('pangolin.idm.client.key','hp7KJra2EJEypQpfxiAoQjoKTbWhc5t4','fnbm-pangolin-rates','prod','latest', 'latest','ENABLED'),
+('pangolin.idm.client.secret','pangolin','fnbm-pangolin-rates','prod','latest', 'latest','ENABLED'),
+('pangolin.idm.token.duration','30','fnbm-pangolin-rates','prod','latest', 'latest','ENABLED');
